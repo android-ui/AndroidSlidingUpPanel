@@ -46,7 +46,7 @@ public class DemoActivity extends AppCompatActivity {
             }
         });
 
-        List<String> your_array_list = Arrays.asList(
+        List<String> yourList = Arrays.asList(
                 "This",
                 "Is",
                 "An",
@@ -76,10 +76,10 @@ public class DemoActivity extends AppCompatActivity {
         // This is the array adapter, it takes the context of the activity as a
         // first parameter, the type of list view as a second parameter and your
         // array as a third parameter.
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 this,
                 android.R.layout.simple_list_item_1,
-                your_array_list );
+                yourList );
 
         lv.setAdapter(arrayAdapter);
 
@@ -133,39 +133,32 @@ public class DemoActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_toggle: {
-                if (mLayout != null) {
-                    if (mLayout.getPanelState() != PanelState.HIDDEN) {
-                        mLayout.setPanelState(PanelState.HIDDEN);
-                        item.setTitle(R.string.action_show);
-                    } else {
-                        mLayout.setPanelState(PanelState.COLLAPSED);
-                        item.setTitle(R.string.action_hide);
-                    }
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_toggle) {
+            if (mLayout != null) {
+                if (mLayout.getPanelState() != PanelState.HIDDEN) {
+                    mLayout.setPanelState(PanelState.HIDDEN);
+                    item.setTitle(R.string.action_show);
+                } else {
+                    mLayout.setPanelState(PanelState.COLLAPSED);
+                    item.setTitle(R.string.action_hide);
                 }
-                return true;
             }
-            case R.id.action_anchor: {
-                if (mLayout != null) {
-                    if (mLayout.getAnchorPoint() == 1.0f) {
-                        mLayout.setAnchorPoint(0.7f);
-                        mLayout.setPanelState(PanelState.ANCHORED);
-                        item.setTitle(R.string.action_anchor_disable);
-                    } else {
-                        mLayout.setAnchorPoint(1.0f);
-                        mLayout.setPanelState(PanelState.COLLAPSED);
-                        item.setTitle(R.string.action_anchor_enable);
-                    }
+            return true;
+        } else if (itemId == R.id.action_anchor) {
+            if (mLayout != null) {
+                if (mLayout.getAnchorPoint() == 1.0f) {
+                    mLayout.setAnchorPoint(0.7f);
+                    mLayout.setPanelState(PanelState.ANCHORED);
+                    item.setTitle(R.string.action_anchor_disable);
+                } else {
+                    mLayout.setAnchorPoint(1.0f);
+                    mLayout.setPanelState(PanelState.COLLAPSED);
+                    item.setTitle(R.string.action_anchor_enable);
                 }
-                return true;
             }
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
