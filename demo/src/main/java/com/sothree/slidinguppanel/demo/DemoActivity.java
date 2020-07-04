@@ -84,6 +84,8 @@ public class DemoActivity extends AppCompatActivity {
         lv.setAdapter(arrayAdapter);
 
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        // Hieu: set shadow = 0
+        mLayout.setShadowHeight(0);
         mLayout.addPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
