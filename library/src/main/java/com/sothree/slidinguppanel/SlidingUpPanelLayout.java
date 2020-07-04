@@ -100,6 +100,11 @@ public class SlidingUpPanelLayout extends ViewGroup {
     private final Paint mCoveredFadePaint = new Paint();
 
     /**
+     * Drawable used to draw the shadow between panes.
+     */
+    private final Drawable mShadowDrawable;
+
+    /**
      * The size of the overhang in pixels.
      */
     private int mPanelHeight = -1;
@@ -233,14 +238,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
          * @param panel       The child view that was moved
          * @param slideOffset The new offset of this sliding pane within its range, from 0-1
          */
-        void onPanelSlide(View panel, float slideOffset);
+        public void onPanelSlide(View panel, float slideOffset);
 
         /**
          * Called when a sliding panel state changes
          *
          * @param panel The child view that was slid to an collapsed position
          */
-        void onPanelStateChanged(View panel, PanelState previousState, PanelState newState);
+        public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState);
+    }
+
+    /**
+     * No-op stubs for {@link PanelSlideListener}. If you only want to implement a subset
+     * of the listener methods you can extend this instead of implement the full interface.
+     */
+    public static class SimplePanelSlideListener implements PanelSlideListener {
+        @Override
+        public void onPanelSlide(View panel, float slideOffset) {
+        }
+
+        @Override
+        public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
+        }
     }
 
     public SlidingUpPanelLayout(Context context) {
@@ -255,6 +274,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         super(context, attrs, defStyle);
 
         if (isInEditMode()) {
+            mShadowDrawable = null;
             mDragHelper = null;
             return;
         }
@@ -307,6 +327,16 @@ public class SlidingUpPanelLayout extends ViewGroup {
         }
         if (mParallaxOffset == -1) {
             mParallaxOffset = (int) (DEFAULT_PARALLAX_OFFSET * density);
+        }
+        // If the shadow height is zero, don't show the shadow
+        if (mShadowHeight > 0) {
+            if (mIsSlidingUp) {
+                mShadowDrawable = getResources().getDrawable(R.drawable.above_shadow);
+            } else {
+                mShadowDrawable = getResources().getDrawable(R.drawable.below_shadow);
+            }
+        } else {
+            mShadowDrawable = null;
         }
 
         setWillNotDraw(false);
@@ -390,6 +420,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
         if (getPanelState() == PanelState.COLLAPSED) {
             smoothToBottom();
             invalidate();
+            return;
         }
     }
 
@@ -522,6 +553,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                     }
                 }
             });
+            ;
         }
     }
 
@@ -1220,6 +1252,28 @@ public class SlidingUpPanelLayout extends ViewGroup {
             }
 
             ViewCompat.postInvalidateOnAnimation(this);
+        }
+    }
+
+    @Override
+    public void draw(Canvas c) {
+        super.draw(c);
+
+        // draw the shadow
+        if (mShadowDrawable != null && mSlideableView != null) {
+            final int right = mSlideableView.getRight();
+            final int top;
+            final int bottom;
+            if (mIsSlidingUp) {
+                top = mSlideableView.getTop() - mShadowHeight;
+                bottom = mSlideableView.getTop();
+            } else {
+                top = mSlideableView.getBottom();
+                bottom = mSlideableView.getBottom() + mShadowHeight;
+            }
+            final int left = mSlideableView.getLeft();
+            mShadowDrawable.setBounds(left, top, right, bottom);
+            mShadowDrawable.draw(c);
         }
     }
 
