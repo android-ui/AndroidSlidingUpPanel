@@ -86,15 +86,17 @@ public class DemoActivity extends AppCompatActivity {
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         // Hieu: set shadow = 0
         mLayout.setShadowHeight(0);
+        mLayout.setAnchorPoint(0.5f); // add AnchorPoint in the middle
+
         mLayout.addPanelSlideListener(new PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
-                Log.i(TAG, "onPanelSlide, offset " + slideOffset);
+                Log.e(TAG, "onPanelSlide, offset " + slideOffset);
             }
 
             @Override
             public void onPanelStateChanged(View panel, PanelState previousState, PanelState newState) {
-                Log.i(TAG, "onPanelStateChanged " + newState);
+                Log.e(TAG, "onPanelStateChanged " + newState);
             }
         });
         mLayout.setFadeOnClickListener(new OnClickListener() {
